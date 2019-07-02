@@ -8,10 +8,10 @@ using System.Threading.Tasks;
 
 namespace FileParser
 {
-    class MenuHelper
+    public class MenuHelper
     {
         string n;
-        TextAssistent textAssistent = new TextAssistent();
+        public TextAssistent textAssistent = new TextAssistent();
         public MenuHelper()
         {
         }
@@ -19,13 +19,8 @@ namespace FileParser
         {
             Console.WriteLine("Choose what to do:");
             Console.WriteLine("1- Parsing by sentences \n2- Parsing by words \n3- Parsing by punctuation marks \n4- Get sorted number of uses of the word \n5- Get longest sentence by symbols \n6- Get shortest sentence by count words \n7- Get the most common letter \n8- Write results to file(items 5-7) \nExit- another key");
-            n = Console.ReadLine();
-            var timer = new Stopwatch();
-            timer.Start();
-            UserChose(n);
-            timer.Stop();
-            Console.WriteLine($"Program finished at {timer.ElapsedMilliseconds} milliseconds");
-            timer.Reset();
+            n = Console.ReadLine();                
+            UserChose(n);            
         }
         public void UserChose(string n)
         {
@@ -79,7 +74,7 @@ namespace FileParser
                     task8.Wait();
                     Console.WriteLine("File recorded!");
                     Console.WriteLine("Task finished");
-                    break;                   
+                    break;
                 default:
                     Environment.Exit(0);
                     break;

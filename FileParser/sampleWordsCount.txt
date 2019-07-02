@@ -1,6 +1,7 @@
-﻿Different words count: 33330
-Word: a - is found 20937 times
-Word: aah - is found 1 times
+﻿Different words count: 33331
+Word: a - is found 20940 times
+Word: aabc - is found 1 times
+Word: aah - is found 3 times
 Word: aaron - is found 4 times
 Word: ab - is found 1 times
 Word: aback - is found 3 times
@@ -14886,7 +14887,7 @@ Word: impurity - is found 1 times
 Word: imputation - is found 2 times
 Word: impute - is found 1 times
 Word: imputed - is found 2 times
-Word: in - is found 21873 times
+Word: in - is found 21874 times
 Word: inability - is found 12 times
 Word: inaccessibility - is found 1 times
 Word: inaccessible - is found 4 times

@@ -37,6 +37,27 @@ namespace FileParser
 
             return text;
         }
+        public string TakeTxt(string _Path)
+        {
+            string text;
+            using (StreamReader sr = new StreamReader(_Path, Encoding.UTF8))
+            {
+                text = sr.ReadToEnd();
+            }
+            string bufer = text;
+            for (int i = 0; i < massymbol.Length; i++)
+            {
+                if (text.Contains(massymbol[i]))
+                {
+                    bufer = bufer.Replace(massymbol[i], "");
+                    text = bufer;
+                }
+            }
+            text = text.Replace("\n", " ");
+            text = text.Replace("\t", " ");
+
+            return text;
+        }
         public List<string> ParseToSentences(string Text)
         {
             string[] mas;           

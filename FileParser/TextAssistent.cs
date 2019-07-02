@@ -7,19 +7,28 @@ using System.IO;
 
 namespace FileParser
 {
-    class TextAssistent
+    public class TextAssistent
     {
         static string path = AppDomain.CurrentDomain.BaseDirectory + "\\.." + "\\.." + @"\sample.txt";
         static string pathInfo = AppDomain.CurrentDomain.BaseDirectory + "\\.." + "\\.." + @"\sampleInfo.txt";
         static string pathCount = AppDomain.CurrentDomain.BaseDirectory + "\\.." + "\\.." + @"\sampleWordsCount.txt";
+        static string pathHistory = AppDomain.CurrentDomain.BaseDirectory + "\\.." + "\\.." + @"\historyOfNewWordsAdded.txt";
         Parser parser = new Parser(path);
+        object locker = new object();
         string Text { get; set; }
+        string AddedFileText { get; set; }
         List<string> Sentences = new List<string>();
         List<string> Words = new List<string>();
+        List<string> AddedFileWords = new List<string>();
         List<string> Phrases = new List<string>();
+        public Dictionary<string, int> repeats = new Dictionary<string, int>();
         public TextAssistent()
         {
             Text = parser.TakeTxt();
+        }
+        public void GetText(string _Path)
+        {
+            AddedFileText = parser.TakeTxt(_Path);
         }
         public void GetSentences()
         {
@@ -30,6 +39,10 @@ namespace FileParser
         {
             Words = parser.ParseToWords(Text);
             Console.WriteLine("Opetation parse to words is done");
+        }
+        public void GetWords(string Text)
+        {
+            AddedFileWords = parser.ParseToWords(Text);          
         }
         public void GetPhrases()
         {
@@ -54,7 +67,7 @@ namespace FileParser
             return Sentences.OrderBy(q => q.Split(' ').Length).FirstOrDefault();
         }
         public void WriteToFileResult()
-        {           
+        {
             string shortSentence = GetShortestSentencebyWords();
             string longestSentence = GetLongestSentenceBySymbols();
             string mostCommonLetter = GetMostPopularLetter();
@@ -68,7 +81,6 @@ namespace FileParser
         }
         public void GetListOfWordsWithCountOfRepeat()
         {
-            Dictionary<string, int> repeats = new Dictionary<string, int>();  
             if (Words.Count == 0)
             {
                 GetWords();
@@ -83,17 +95,57 @@ namespace FileParser
                 {
                     repeats[word] = 1;
                 }
-            }                    
-            using (StreamWriter sw = new StreamWriter(pathCount, false, Encoding.UTF8))
+            }
+            lock (locker)
             {
-                sw.WriteLine($"Different words count: {Words.Distinct().Count()}");
-                foreach (var item in repeats.OrderBy(k=>k.Key))
+                using (StreamWriter sw = new StreamWriter(pathCount, false, Encoding.UTF8))
                 {
-                    sw.WriteLine($"Word: {item.Key} - is found {item.Value} times");
-                }               
+                    sw.WriteLine($"Different words count: {Words.Distinct().Count()}");
+                    foreach (var item in repeats.OrderBy(k => k.Key))
+                    {
+                        sw.WriteLine($"Word: {item.Key} - is found {item.Value} times");
+                    }
+                }
             }
             Console.WriteLine("File recorded!");
-        }  
+        }
+        public void GetListOfWordsWithCountOfRepeatInDirectoryTextFiles(string _Path)
+        {
+            int count = 0;
+            GetText(_Path);
+            GetWords(AddedFileText);
+            if (repeats.Count==0)
+            {
+                GetListOfWordsWithCountOfRepeat();
+            }
+            foreach (var word in AddedFileWords)
+            {
+                if (repeats.ContainsKey(word))
+                {
+                    repeats[word] += 1;
+                }
+                else
+                {
+                    repeats[word] = 1;
+                    count++;
+                }
+            }
+            lock (locker)
+            {
+                using (StreamWriter sw = new StreamWriter(pathCount, false, Encoding.UTF8))
+                {
+                    sw.WriteLine($"Different words count: {repeats.Count}");
+                    foreach (var item in repeats.OrderBy(k => k.Key))
+                    {
+                        sw.WriteLine($"Word: {item.Key} - is found {item.Value} times");
+                    }
+                }
+            }
+            using (StreamWriter sw = new StreamWriter(pathHistory, true, Encoding.UTF8))
+            {
+                sw.WriteLine($"Change on {DateTime.Now.ToShortDateString()} , added {count} words from {_Path}");
+            }        
+        }
         public string GetMostPopularLetter()
         {
             Dictionary<char, int> letters = new Dictionary<char, int>();
@@ -114,7 +166,7 @@ namespace FileParser
                 }
             }
             string _letter = letters.OrderByDescending(k => k.Value).Select(k => k.Key).FirstOrDefault().ToString();
-            string count = letters.OrderByDescending(k => k.Value).Select(k => k.Value).FirstOrDefault().ToString();           
+            string count = letters.OrderByDescending(k => k.Value).Select(k => k.Value).FirstOrDefault().ToString();
             return $"The most common letter is - {_letter}, was found {count} times";
         }
     }
