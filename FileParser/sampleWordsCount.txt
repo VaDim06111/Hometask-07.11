@@ -1,8 +1,8 @@
-﻿Different words count: 33331
-Word: a - is found 20940 times
-Word: aabc - is found 1 times
-Word: aah - is found 3 times
+﻿Different words count: 33334
+Word: a - is found 20937 times
+Word: aah - is found 1 times
 Word: aaron - is found 4 times
+Word: aav - is found 1 times
 Word: ab - is found 1 times
 Word: aback - is found 3 times
 Word: abacus - is found 1 times
@@ -512,6 +512,7 @@ Word: aerobic - is found 2 times
 Word: aerogenes - is found 3 times
 Word: aet - is found 40 times
 Word: afar - is found 2 times
+Word: afc - is found 1 times
 Word: afebrile - is found 1 times
 Word: affability - is found 1 times
 Word: affable - is found 2 times
@@ -7937,6 +7938,7 @@ Word: dews - is found 1 times
 Word: dewy - is found 3 times
 Word: dexter - is found 1 times
 Word: dexterous - is found 3 times
+Word: dfgd - is found 1 times
 Word: d'honneur - is found 4 times
 Word: d'hotel - is found 1 times
 Word: diabetes - is found 12 times
@@ -12427,6 +12429,7 @@ Word: gazetteer - is found 1 times
 Word: gazettes - is found 1 times
 Word: gazing - is found 66 times
 Word: gbnewby@pglaf - is found 2 times
+Word: gdfgcvdfgdf - is found 1 times
 Word: gdrard's - is found 1 times
 Word: gear - is found 2 times
 Word: geben - is found 1 times
@@ -14887,7 +14890,7 @@ Word: impurity - is found 1 times
 Word: imputation - is found 2 times
 Word: impute - is found 1 times
 Word: imputed - is found 2 times
-Word: in - is found 21874 times
+Word: in - is found 21873 times
 Word: inability - is found 12 times
 Word: inaccessibility - is found 1 times
 Word: inaccessible - is found 4 times

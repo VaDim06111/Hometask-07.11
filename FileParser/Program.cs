@@ -17,8 +17,13 @@ namespace FileParser
             MenuHelper menuHelper = new MenuHelper();
             FileWatcher fileWatcher = new FileWatcher(menuHelper);           
             DeleteFileHistory();
-            Thread threadWatcher = new Thread(()=>fileWatcher.StartWatch());
-            threadWatcher.Start();
+            if (File.Exists(AppDomain.CurrentDomain.BaseDirectory + "\\.." + "\\.." + @"\stateDirectory.json"))
+            {
+                Task taskWatcher1 = new Task(() => fileWatcher.CheckInstance().Wait());
+                taskWatcher1.Start();
+            }
+            Task taskWatcher2 = new Task(()=>fileWatcher.StartWatch());
+            taskWatcher2.Start();
             while (a == 1)
             {
                 try
@@ -33,7 +38,7 @@ namespace FileParser
                     Console.WriteLine("This item wasn't found! Check the input data!");
                 }
             }
-            threadWatcher.Join();
+            Task.WaitAll();            
         }
         static public void DeleteFileHistory()
         {
