@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
+using Newtonsoft.Json;
 
 namespace FileParser
 {
@@ -13,6 +14,7 @@ namespace FileParser
         static string pathInfo = AppDomain.CurrentDomain.BaseDirectory + "\\.." + "\\.." + @"\sampleInfo.txt";
         static string pathCount = AppDomain.CurrentDomain.BaseDirectory + "\\.." + "\\.." + @"\sampleWordsCount.txt";
         static string pathHistory = AppDomain.CurrentDomain.BaseDirectory + "\\.." + "\\.." + @"\historyOfNewWordsAdded.txt";
+        static string pathDictionary = AppDomain.CurrentDomain.BaseDirectory + "\\.." + "\\.." + @"\dictionary.json";
         Parser parser = new Parser(path);
         object locker = new object();
         string Text { get; set; }
@@ -81,33 +83,55 @@ namespace FileParser
         }
         public void GetListOfWordsWithCountOfRepeat()
         {
-            if (Words.Count == 0)
+            if (File.Exists(AppDomain.CurrentDomain.BaseDirectory + "\\.." + "\\.." + @"\dictionary.json"))
             {
-                GetWords();
-            }
-            foreach (var word in Words)
-            {
-                if (repeats.ContainsKey(word))
+                string dict = "";
+                lock (locker)
                 {
-                    repeats[word] += 1;
-                }
-                else
-                {
-                    repeats[word] = 1;
-                }
-            }
-            lock (locker)
-            {
-                using (StreamWriter sw = new StreamWriter(pathCount, false, Encoding.UTF8))
-                {
-                    sw.WriteLine($"Different words count: {Words.Distinct().Count()}");
-                    foreach (var item in repeats.OrderBy(k => k.Key))
+                    using (StreamReader sr = new StreamReader(AppDomain.CurrentDomain.BaseDirectory + "\\.." + "\\.." + @"\dictionary.json", Encoding.UTF8))
                     {
-                        sw.WriteLine($"Word: {item.Key} - is found {item.Value} times");
+                        dict = sr.ReadLine();
+                    }
+                    repeats = JsonConvert.DeserializeObject<Dictionary<string, int>>(dict);
+                }
+            }
+            else
+            {
+                if (Words.Count == 0)
+                {
+                    GetWords();
+                }
+                foreach (var word in Words)
+                {
+                    if (repeats.ContainsKey(word))
+                    {
+                        repeats[word] += 1;
+                    }
+                    else
+                    {
+                        repeats[word] = 1;
                     }
                 }
+
+                lock (locker)
+                {
+                    using (StreamWriter sw = new StreamWriter(pathCount, false, Encoding.UTF8))
+                    {
+                        sw.WriteLine($"Different words count: {Words.Distinct().Count()}");
+                        foreach (var item in repeats.OrderBy(k => k.Key))
+                        {
+                            sw.WriteLine($"Word: {item.Key} - is found {item.Value} times");
+                        }
+                    }
+                    using (StreamWriter sw = new StreamWriter(pathDictionary, false, Encoding.UTF8))
+                    {
+                        var result = JsonConvert.SerializeObject(repeats);
+                        sw.WriteLine(result);
+                    }
+                }
+
+                Console.WriteLine("File recorded!");
             }
-            Console.WriteLine("File recorded!");
         }
         public void GetListOfWordsWithCountOfRepeatInDirectoryTextFiles(string _Path)
         {
@@ -140,10 +164,15 @@ namespace FileParser
                         sw.WriteLine($"Word: {item.Key} - is found {item.Value} times");
                     }
                 }
+                using (StreamWriter sw = new StreamWriter(pathDictionary, false, Encoding.UTF8))
+                {
+                    var result = JsonConvert.SerializeObject(repeats);
+                    sw.WriteLine(result);
+                }
             }
             using (StreamWriter sw = new StreamWriter(pathHistory, true, Encoding.UTF8))
             {
-                sw.WriteLine($"Change on {DateTime.Now.ToShortDateString()} , added {count} words from {_Path}");
+                sw.WriteLine($"Change on {DateTime.Now.ToShortDateString()} {DateTime.Now.ToLongTimeString()} , added {count} words from {_Path}");
             }        
         }
         public string GetMostPopularLetter()

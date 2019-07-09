@@ -11,6 +11,7 @@ namespace FileParser
     class Parser
     {
         string Path { get; set; }
+        object locker = new object();
         string[] massymbol = new[] { ">", "<", "\"", "^", "&", "(", ")", "[", "]", "{", "}", "»", "«", "_", "|", "+", "-", "#", "$", "%", "*", "/", "=", "~" };
         public Parser(string _path)
         {
@@ -19,9 +20,12 @@ namespace FileParser
         public string TakeTxt()
         {
             string text;
-            using (StreamReader sr = new StreamReader(Path, Encoding.UTF8))
+            lock (locker)
             {
-                text = sr.ReadToEnd();
+                using (StreamReader sr = new StreamReader(Path, Encoding.UTF8))
+                {
+                    text = sr.ReadToEnd();
+                }
             }
             string bufer = text;
             for (int i = 0; i < massymbol.Length; i++)
@@ -40,9 +44,12 @@ namespace FileParser
         public string TakeTxt(string _Path)
         {
             string text;
-            using (StreamReader sr = new StreamReader(_Path, Encoding.UTF8))
+            lock (locker)
             {
-                text = sr.ReadToEnd();
+                using (StreamReader sr = new StreamReader(_Path, Encoding.UTF8))
+                {
+                    text = sr.ReadToEnd();
+                }
             }
             string bufer = text;
             for (int i = 0; i < massymbol.Length; i++)

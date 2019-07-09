@@ -55,7 +55,7 @@ namespace FileParser
             var files = JsonConvert.DeserializeObject<FileInfo[]>(strFiles);
             if(files != directoryInfo.GetFiles("*.txt"))
             {
-                var newAddedFiles = directoryInfo.GetFiles("*.txt").Union(files);
+                var newAddedFiles = directoryInfo.GetFiles("*.txt").Except(files);
                 foreach (var file in newAddedFiles)
                 {
                     if(File.Exists(file.FullName))

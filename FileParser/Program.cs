@@ -15,15 +15,16 @@ namespace FileParser
         {
             int a = 1;
             MenuHelper menuHelper = new MenuHelper();
-            FileWatcher fileWatcher = new FileWatcher(menuHelper);           
-            DeleteFileHistory();
-            if (File.Exists(AppDomain.CurrentDomain.BaseDirectory + "\\.." + "\\.." + @"\stateDirectory.json"))
+            FileWatcher fileWatcher = new FileWatcher(menuHelper);                      
+            if (File.Exists(AppDomain.CurrentDomain.BaseDirectory + "\\.." + "\\.." + @"\dictionary.json"))
             {
-                Task taskWatcher1 = new Task(() => fileWatcher.CheckInstance().Wait());
-                taskWatcher1.Start();
+                Task taskDictionaryLoad = new Task(() => menuHelper.textAssistent.GetListOfWordsWithCountOfRepeat());
+                taskDictionaryLoad.Start();
             }
-            Task taskWatcher2 = new Task(()=>fileWatcher.StartWatch());
-            taskWatcher2.Start();
+            Task taskCheckNewFiles = new Task(() => fileWatcher.CheckInstance());
+            taskCheckNewFiles.Start();
+            Task taskWatcher = new Task(()=>fileWatcher.StartWatch());
+            taskWatcher.Start();
             while (a == 1)
             {
                 try
@@ -39,14 +40,6 @@ namespace FileParser
                 }
             }
             Task.WaitAll();            
-        }
-        static public void DeleteFileHistory()
-        {
-            string Path = AppDomain.CurrentDomain.BaseDirectory + "\\.." + "\\.." + @"\historyOfNewWordsAdded.txt";
-            if (File.Exists(Path))
-            {
-                File.Delete(Path);
-            }
-        }
+        }       
     }
 }
